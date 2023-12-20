@@ -96,31 +96,10 @@ from scipy.optimize import curve_fit
 import statsmodels.api as sm
 
 
-FLUORESCENCE={
-	'ATP': ['ATP', 
-		'ADP',
-		'MgG', 'MAGNESIUM GREEN'],
-
-	'DYm': ['DYm',
-		'Safr', 'SAFRANIN',
-		'TMRM', 'TMRE'],
-
-	'ROS': ['ROS',
-		'AuR', 'AmplexRed'],
-
-	'NADH': ['NADH', 'NAD'],
-
-	'CytC': ['CytC', 'Cytochrome c'],
-
-	'FADH': ['FADH', 'FAD'],
-
-		}
-
-
 
 def linear_fit(x, y, steps=0.1):
 
-	#Get standard curve
+	# Load model
 	lm=linear_model.LinearRegression()
 	_x=np.array(x).reshape(-1,1)
 
@@ -231,7 +210,7 @@ class ATP():
 		# If no 'ADP' or 'ATP' event in place,
 		# returns the non calibrated signal
 		
-		if True:
+		if True: # for testing
 
 			if _from == 'MgCl2': adtp_col=_from
 
@@ -239,7 +218,7 @@ class ATP():
 			# only select events that are present in ATP_calib
 			self.ATP_calib={k:v for k,v in self.ATP_calib.items() if k in self.titrations}
 
-			if True:
+			if True: # for testing
 				
 				sc={} # as x:y ([MgCl2]: [A(D/T)P])
 				for event, conc in self.ATP_calib.items():
@@ -256,10 +235,10 @@ class ATP():
 				# Get standard curve
 				slope, intercept, r2, predicted = linear_fit(x, y)
 
-				# This is for ADP calib.
+				# This is for some ADP calib, were the second titration did not triger any drop
 				# Seems to pick up wrong 0
 				# so only do 2 points cal
-				if r2<=0.9:
+				if r2<=0.7:
 					x, y = x[:-1], y[:-1]
 					slope, intercept, r2, predicted = linear_fit(x, y)
 
